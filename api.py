@@ -42,6 +42,7 @@ def insert_registeration(uid:str, email: str, gender: str, department: str, pass
     try:
         cur.execute(sql_command, (uid, email, gender, department, password))
         mysql.connection.commit()
+        return {"res":"success"}
         
         # fetch_data = cur.fetchall()
         # cur.close()
@@ -61,10 +62,10 @@ def register_api():
     department = data["department"]
     password = data["password"]
     start_time = time.time()
-    insert_registeration(uid, email, gender, department, password)
+    return_dict = insert_registeration(uid, email, gender, department, password)
     end_time = time.time()
     handle_time = round(end_time - start_time, 2)
-    return_dict = {}
+    
     return_dict["handle_time"] = handle_time
     
     return jsonify(return_dict)
@@ -147,9 +148,10 @@ def useritem_api():
 # Get item-item list information
 def get_iitembook(mmsid: str, mysql=mysql):
     cur = mysql.connection.cursor()
-    sql_command = "SELECT `ii_list` FROM item_top_k LEFT JOIN item_info on item_info.iid = item_top_k.iid WHERE mmsid = %s;"
+    sql_command = "SELECT `ii_top30` FROM mms_info WHERE mmsid = %s;"
     cur.execute(sql_command, (mmsid, ))
-    fetch_data = cur.fetchall()
+    columns = [col[0] for col in cur.description]
+    fetch_data = {col: row for col, row in zip(columns, cur.fetchall()[0])}
     cur.close()
     return fetch_data
 
