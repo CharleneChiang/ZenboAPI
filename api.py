@@ -96,10 +96,10 @@ def uuser_api():
 # Get user information
 
 
-def get_userinfo(email: str, mysql=mysql):
+def get_userinfo(email: str,password: str, mysql=mysql):
     cur = mysql.connection.cursor()
-    sql_command = "SELECT * FROM user_info WHERE email = %s;"
-    cur.execute(sql_command, (email, ))
+    sql_command = "SELECT * FROM user_info WHERE email = %s AND password = %s;"
+    cur.execute(sql_command, (email,password, ))
     #fetch_data = cur.fetchall()
     columns = [col[0] for col in cur.description]
     fetch_data = {col: row for col, row in zip(columns, cur.fetchall()[0])}
@@ -112,8 +112,9 @@ def get_userinfo(email: str, mysql=mysql):
 def userinfo_api():
     data = request.get_json()
     email = data["email"]
+    password = data["password"]
     start_time = time.time()
-    return_dict = get_userinfo(email)
+    return_dict = get_userinfo(email,password)
     end_time = time.time()
     handle_time = round(end_time - start_time, 2)
     return_dict["handle_time"] = handle_time
