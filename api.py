@@ -74,7 +74,7 @@ def register_api():
 # Get user-user list information
 def get_uuserbook(email: str, mysql=mysql):
     cur = mysql.connection.cursor()
-    sql_command = "SELECT `uu_list` FROM user_top_k WHERE email = %s;"
+    sql_command = "SELECT `uu_list` FROM user_info WHERE email = %s;"
     cur.execute(sql_command, (email, ))
     fetch_data = cur.fetchall()
     cur.close()
