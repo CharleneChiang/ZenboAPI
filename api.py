@@ -72,27 +72,28 @@ def register_api():
 
 
 # Get user-user list information
-def get_uuserbook(email: str, mysql=mysql):
-    cur = mysql.connection.cursor()
-    sql_command = "SELECT `uu_list` FROM user_info WHERE email = %s;"
-    cur.execute(sql_command, (email, ))
-    fetch_data = cur.fetchall()
-    cur.close()
-    return fetch_data
+# def get_uuserbook(email: str, mysql=mysql):
+#     cur = mysql.connection.cursor()
+#     sql_command = "SELECT `uu_list` FROM user_info WHERE email = %s;"
+#     cur.execute(sql_command, (email, ))
+#     columns = [col[0] for col in cur.description]
+#     fetch_data = {col: row for col, row in zip(columns, cur.fetchall()[0])}
+#     cur.close()
+#     return fetch_data
 
 
 # User-User Suggestion API
-@app.route('/api/v1/uuser/', methods=['POST'])
-def uuser_api():
-    data = request.get_json()
-    email = data["email"]
-    start_time = time.time()
-    return_dict = get_uuserbook(email)
-    end_time = time.time()
-    handle_time = round(end_time - start_time, 2)
-    return_dict["handle_time"] = handle_time
-    return_dict["email"] = email
-    return jsonify(return_dict)
+# @app.route('/api/v1/uuser/', methods=['POST'])
+# def uuser_api():
+#     data = request.get_json()
+#     email = data["email"]
+#     start_time = time.time()
+#     return_dict = get_uuserbook(email)
+#     end_time = time.time()
+#     handle_time = round(end_time - start_time, 2)
+#     return_dict["handle_time"] = handle_time
+#     return_dict["email"] = email
+#     return jsonify(return_dict)
 
 # Get user information
 
