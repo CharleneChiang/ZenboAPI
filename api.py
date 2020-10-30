@@ -108,6 +108,17 @@ def get_userinfo(email: str,password: str, mysql=mysql):
     cur.close()
     return  fetch_data
 
+
+def get_userloan(uid: int, mysql=mysql):
+    cur = mysql.connection.cursor()
+    sql_command = "SELECT `mmsid` FROM item_info LEFT JOIN loan_info on item_info.iid = loaninfo.iid WHERE loan_info.uid = %s "
+    cur.execute(sql_command,(uid,))
+    columns = [col[0] for col in cur.description]
+    fetch_data = {col: row for col, row in zip(columns, cur.fetchall()[0])}
+    cur.close()
+    return  fetch_data
+
+
 # User Information API (Include recent loan data)
 
 @app.route('/api/v1/userinfo/', methods=['POST'])
@@ -121,6 +132,18 @@ def userinfo_api():
     handle_time = round(end_time - start_time, 2)
     return_dict["handle_time"] = handle_time
     return_dict["email"] = email
+    return jsonify(return_dict)
+
+@app.route('/api/v1/userloan/', methods=['POST'])
+def userloan_api():
+    data = request.get_json()
+    uid = data["uid"]
+    start_time = time.time()
+    return_dict = get_userloan(uid)
+    end_time = time.time()
+    handle_time = round(end_time - start_time, 2)
+    return_dict["handle_time"] = handle_time
+    return_dict["uid"] = uid
     return jsonify(return_dict)
 
 
