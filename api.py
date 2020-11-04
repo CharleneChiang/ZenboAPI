@@ -111,12 +111,13 @@ def get_userinfo(email: str,password: str, mysql=mysql):
 
 def get_userloan(uid: int, mysql=mysql):
     cur = mysql.connection.cursor()
-    sql_command = "SELECT `mmsid` FROM item_info LEFT JOIN loan_info on item_info.iid = loaninfo.iid WHERE loan_info.uid = %s "
+    sql_command = "SELECT `mmsid` FROM item_info LEFT JOIN loan_info on item_info.iid = loan_info.iid WHERE loan_info.uid = %s "
     cur.execute(sql_command,(uid,))
-    columns = [col[0] for col in cur.description]
-    fetch_data = {col: row for col, row in zip(columns, cur.fetchall()[0])}
+    fetch_data = cur.fetchall()
+    # columns = [col[0] for col in cur.description]
+    # fetch_data = {col: row for col, row in zip(columns, cur.fetchall()[0])}
     cur.close()
-    return  fetch_data
+    return  {"res":fetch_data}
 
 
 # User Information API (Include recent loan data)
