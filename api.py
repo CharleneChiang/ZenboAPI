@@ -36,14 +36,14 @@ mysql = MySQL(app)
 # Insert register information
 
 
-def insert_registeration(uid:str, email: str, gender: str, department: str, password: str, mysql=mysql):
+def insert_registeration(uid: str, email: str, gender: str, department: str, password: str, mysql=mysql):
     cur = mysql.connection.cursor()
     sql_command = "INSERT INTO library_db.user_info (uid, email, gender, department, password) VALUES (%s,%s,%s,%s,%s);"
     try:
         cur.execute(sql_command, (uid, email, gender, department, password))
         mysql.connection.commit()
-        return {"res":"success"}
-        
+        return {"res": "success"}
+
         # fetch_data = cur.fetchall()
         # cur.close()
         # return fetch_data
@@ -62,12 +62,12 @@ def register_api():
     department = data["department"]
     password = data["password"]
     start_time = time.time()
-    return_dict = insert_registeration(uid, email, gender, department, password)
+    return_dict = insert_registeration(
+        uid, email, gender, department, password)
     end_time = time.time()
     handle_time = round(end_time - start_time, 2)
-    
+
     return_dict["handle_time"] = handle_time
-    
     return jsonify(return_dict)
 
 
@@ -98,26 +98,26 @@ def register_api():
 # Get user information
 
 
-def get_userinfo(email: str,password: str, mysql=mysql):
+def get_userinfo(email: str, password: str, mysql=mysql):
     cur = mysql.connection.cursor()
     sql_command = "SELECT * FROM user_info WHERE email = %s AND password = %s;"
-    cur.execute(sql_command, (email,password, ))
-    #fetch_data = cur.fetchall()
+    cur.execute(sql_command, (email, password, ))
+    # fetch_data = cur.fetchall()
     columns = [col[0] for col in cur.description]
     fetch_data = {col: row for col, row in zip(columns, cur.fetchall()[0])}
     cur.close()
-    return  fetch_data
+    return fetch_data
 
 
 def get_userloan(uid: int, mysql=mysql):
     cur = mysql.connection.cursor()
     sql_command = "SELECT `mmsid` FROM item_info LEFT JOIN loan_info on item_info.iid = loan_info.iid WHERE loan_info.uid = %s "
-    cur.execute(sql_command,(uid,))
+    cur.execute(sql_command, (uid,))
     fetch_data = cur.fetchall()
     # columns = [col[0] for col in cur.description]
     # fetch_data = {col: row for col, row in zip(columns, cur.fetchall()[0])}
     cur.close()
-    return  {"res":fetch_data}
+    return {"res": fetch_data}
 
 
 # User Information API (Include recent loan data)
@@ -128,12 +128,14 @@ def userinfo_api():
     email = data["email"]
     password = data["password"]
     start_time = time.time()
-    return_dict = get_userinfo(email,password)
+    return_dict = get_userinfo(email, password)
     end_time = time.time()
     handle_time = round(end_time - start_time, 2)
     return_dict["handle_time"] = handle_time
     return_dict["email"] = email
-    return jsonify(return_dict)
+    res = "success"
+    return jsonify(return_dict), res
+
 
 @app.route('/api/v1/userloan/', methods=['POST'])
 def userloan_api():
