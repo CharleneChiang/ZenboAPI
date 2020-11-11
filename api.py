@@ -1,6 +1,7 @@
 from flask import Flask
 import yaml
 import time
+import pymysql
 from flask import request
 from flask import jsonify
 from flask_mysqldb import MySQL
@@ -47,8 +48,8 @@ def insert_registeration(uid: str, email: str, gender: str, department: str, pas
         # fetch_data = cur.fetchall()
         # cur.close()
         # return fetch_data
-    except Exception as e:
-        raise(e)
+    except pymysql.Error:
+        return {"res": "fail"}
 
 # Register API
 
@@ -101,12 +102,16 @@ def register_api():
 def get_userinfo(email: str, password: str, mysql=mysql):
     cur = mysql.connection.cursor()
     sql_command = "SELECT * FROM user_info WHERE email = %s AND password = %s;"
-    cur.execute(sql_command, (email, password, ))
-    # fetch_data = cur.fetchall()
-    columns = [col[0] for col in cur.description]
-    fetch_data = {col: row for col, row in zip(columns, cur.fetchall()[0])}
+    try:
+        cur.execute(sql_command, (email, password, ))
+        # fetch_data = cur.fetchall()
+        columns = [col[0] for col in cur.description]
+        fetch_data = {col: row for col, row in zip(columns, cur.fetchall()[0])}
+        return fetch_data
+    except pymysql.Error:
+        return{"res": "fail"}
+
     cur.close()
-    return fetch_data
 
 
 def get_userloan(uid: int, mysql=mysql):
@@ -207,3 +212,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# /Users/charlene/Library/Android/Sdk
