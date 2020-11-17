@@ -48,7 +48,7 @@ def insert_registeration(uid: str, email: str, gender: str, department: str, pas
         # fetch_data = cur.fetchall()
         # cur.close()
         # return fetch_data
-    except MySQLdb.Error:
+    except:
         return {"res": "fail"}
 
 # Register API
@@ -107,8 +107,9 @@ def get_userinfo(email: str, password: str, mysql=mysql):
         # fetch_data = cur.fetchall()
         columns = [col[0] for col in cur.description]
         fetch_data = {col: row for col, row in zip(columns, cur.fetchall()[0])}
+        fetch_data["res"] = "success"
         return fetch_data
-    except MySQLdb.Error:
+    except:
         return{"res": "fail"}
 
     cur.close()
@@ -138,7 +139,7 @@ def userinfo_api():
     handle_time = round(end_time - start_time, 2)
     return_dict["handle_time"] = handle_time
     return_dict["email"] = email
-    return_dict["res"] = "success"
+    
     return jsonify(return_dict)
 
 
