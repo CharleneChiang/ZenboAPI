@@ -1,7 +1,7 @@
 from flask import Flask
 import yaml
 import time
-import pymysql
+import MySQLdb
 from flask import request
 from flask import jsonify
 from flask_mysqldb import MySQL
@@ -48,7 +48,7 @@ def insert_registeration(uid: str, email: str, gender: str, department: str, pas
         # fetch_data = cur.fetchall()
         # cur.close()
         # return fetch_data
-    except pymysql.Error:
+    except MySQLdb.Error:
         return {"res": "fail"}
 
 # Register API
@@ -108,7 +108,7 @@ def get_userinfo(email: str, password: str, mysql=mysql):
         columns = [col[0] for col in cur.description]
         fetch_data = {col: row for col, row in zip(columns, cur.fetchall()[0])}
         return fetch_data
-    except pymysql.Error:
+    except MySQLdb.Error:
         return{"res": "fail"}
 
     cur.close()
