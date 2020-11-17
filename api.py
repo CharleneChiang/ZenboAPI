@@ -138,8 +138,8 @@ def userinfo_api():
     handle_time = round(end_time - start_time, 2)
     return_dict["handle_time"] = handle_time
     return_dict["email"] = email
-    res = "success"
-    return jsonify(return_dict), res
+    return_dict["res"] = "success"
+    return jsonify(return_dict)
 
 
 @app.route('/api/v1/userloan/', methods=['POST'])
