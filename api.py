@@ -1,6 +1,7 @@
 from flask import Flask
 import yaml
 import time
+import json
 import MySQLdb
 from flask import request
 from flask import jsonify
@@ -69,7 +70,9 @@ def register_api():
     handle_time = round(end_time - start_time, 2)
 
     return_dict["handle_time"] = handle_time
+    print(return_dict)
     return jsonify(return_dict)
+
 
 
 # Get user-user list information
@@ -108,6 +111,23 @@ def get_userinfo(email: str, password: str, mysql=mysql):
         columns = [col[0] for col in cur.description]
         fetch_data = {col: row for col, row in zip(columns, cur.fetchall()[0])}
         fetch_data["res"] = "success"
+        # print (fetch_data["uu_list"])
+        book_detail = []
+        book_final = []
+        book_info =""
+        for mmsid in json.loads(fetch_data["uu_list"]):
+            print (mmsid)
+            sql_command = "SELECT mmsid, title, author, cover FROM mms_info WHERE mmsid = %s;"
+            cur.execute(sql_command, (mmsid,))
+            fetch_data1 = cur.fetchall()
+            # columns = [col[0] for col in cur.description]
+            # book_detail.append({col: row for col, row in zip(columns, cur.fetchall()[0])})
+            book_detail.append(fetch_data1[0])
+        for book in book_detail:
+                book_final.append(str(book[0])+"@@"+book[1]+"@#"+book[2]+"##"+book[3]+"#@")
+        for i in range(len(book_final)):
+            book_info += book_final[i]
+        fetch_data["book_info"] = book_info
         return fetch_data
     except:
         return{"res": "fail"}
