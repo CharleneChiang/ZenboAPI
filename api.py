@@ -38,11 +38,12 @@ mysql = MySQL(app)
 # Insert register information
 
 
-def insert_registeration(uid: str, email: str, gender: str, department: str, password: str, mysql=mysql):
+def insert_registeration(uid: str, name: str, email: str, gender: str, department: str, password: str, mysql=mysql):
     cur = mysql.connection.cursor()
-    sql_command = "INSERT INTO library_db.user_info (uid, email, gender, department, password) VALUES (%s,%s,%s,%s,%s);"
+    sql_command = "INSERT INTO library_db.user_info (uid, name, email, gender, department, password) VALUES (%s,%s,%s,%s,%s);"
     try:
-        cur.execute(sql_command, (uid, email, gender, department, password))
+        cur.execute(sql_command, (uid, name, email,
+                                  gender, department, password))
         mysql.connection.commit()
         return {"res": "success"}
 
@@ -59,20 +60,20 @@ def insert_registeration(uid: str, email: str, gender: str, department: str, pas
 def register_api():
     data = request.get_json()
     uid = data["uid"]
+    name = data["name"]
     email = data["email"]
     gender = data["gender"]
     department = data["department"]
     password = data["password"]
     start_time = time.time()
     return_dict = insert_registeration(
-        uid, email, gender, department, password)
+        uid, name, email, gender, department, password)
     end_time = time.time()
     handle_time = round(end_time - start_time, 2)
 
     return_dict["handle_time"] = handle_time
     print(return_dict)
     return jsonify(return_dict)
-
 
 
 # Get user-user list information
@@ -114,9 +115,9 @@ def get_userinfo(email: str, password: str, mysql=mysql):
         # print (fetch_data["uu_list"])
         book_detail = []
         book_final = []
-        book_info =""
+        book_info = ""
         for mmsid in json.loads(fetch_data["uu_list"]):
-            print (mmsid)
+            print(mmsid)
             sql_command = "SELECT mmsid, title, author, cover FROM mms_info WHERE mmsid = %s;"
             cur.execute(sql_command, (mmsid,))
             fetch_data1 = cur.fetchall()
@@ -124,7 +125,8 @@ def get_userinfo(email: str, password: str, mysql=mysql):
             # book_detail.append({col: row for col, row in zip(columns, cur.fetchall()[0])})
             book_detail.append(fetch_data1[0])
         for book in book_detail:
-                book_final.append(str(book[0])+"@@"+book[1]+"@#"+book[2]+"##"+book[3]+"#@")
+            book_final.append(str(book[0])+"@@" +
+                              book[1]+"@#"+book[2]+"##"+book[3]+"#@")
         for i in range(len(book_final)):
             book_info += book_final[i]
         fetch_data["book_info"] = book_info
@@ -159,7 +161,7 @@ def userinfo_api():
     handle_time = round(end_time - start_time, 2)
     return_dict["handle_time"] = handle_time
     return_dict["email"] = email
-    
+
     return jsonify(return_dict)
 
 
