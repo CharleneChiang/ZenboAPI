@@ -40,18 +40,18 @@ mysql = MySQL(app)
 
 def insert_registeration(uid: str, name: str, email: str, gender: str, department: str, password: str, mysql=mysql):
     cur = mysql.connection.cursor()
-    sql_command = "INSERT INTO library_db.user_info (uid, name, email, gender, department, password) VALUES (%s,%s,%s,%s,%s);"
-    try:
-        cur.execute(sql_command, (uid, name, email,
-                                  gender, department, password))
-        mysql.connection.commit()
-        return {"res": "success"}
+    sql_command = "INSERT INTO library_db.user_info (uid, name, email, gender, department, password) VALUES (%s,%s,%s,%s,%s,%s);"
+    # try:
+    cur.execute(sql_command, (uid, name, email,
+                                gender, department, password))
+    mysql.connection.commit()
+    return {"res": "success"}
 
         # fetch_data = cur.fetchall()
         # cur.close()
         # return fetch_data
-    except:
-        return {"res": "fail"}
+    # except:
+        # return {"res": "fail"}
 
 # Register API
 
