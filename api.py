@@ -6,6 +6,7 @@ import MySQLdb
 from flask import request
 from flask import jsonify
 from flask_mysqldb import MySQL
+from hashlib import sha256
 
 
 # construct app
@@ -64,7 +65,7 @@ def register_api():
     email = data["email"]
     gender = data["gender"]
     department = data["department"]
-    password = data["password"]
+    password = sha256.update(data["password"]).digest()
     start_time = time.time()
     return_dict = insert_registeration(
         uid, name, email, gender, department, password)
@@ -158,7 +159,7 @@ def get_userloan(uid: int, mysql=mysql):
 def userinfo_api():
     data = request.get_json()
     email = data["email"]
-    password = data["password"]
+    password = sha256.update(data["password"]).digest()
     start_time = time.time()
     return_dict = get_userinfo(email, password)
     end_time = time.time()
